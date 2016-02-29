@@ -314,12 +314,30 @@ Formatter.prototype._formatValue = function (ignoreCaret) {
 
   // Set value and adhere to maxLength
   this.el.value = this.val.substr(0, this.mLength);
+  this._fireEvent(this.el, "input");
 
   // Set new caret position
   if ((typeof ignoreCaret) === 'undefined' || ignoreCaret === false) {
     inptSel.set(this.el, this.newPos);
   }
 };
+
+// @private
+// Fires event on provided element
+Formatter.prototype._fireEvent = function (element, event) {
+  if (document.createEventObject){
+    // dispatch for IE
+    var evt = document.createEventObject();
+    return element.fireEvent('on'+event,evt)
+  }
+  else {
+    // dispatch for firefox + others
+    var evt = document.createEvent("HTMLEvents");
+    // event type,bubbling,cancelable
+    evt.initEvent(event, true, true);
+    return !element.dispatchEvent(evt);
+  }
+}
 
 //
 // @private
